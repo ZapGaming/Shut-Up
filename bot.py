@@ -2,19 +2,12 @@ import discord
 import os
 import asyncio
 
-# Retrieve bot token and guild ID from environment variables
+# Retrieve bot token from environment variables
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
-GUILD_ID_STR = os.getenv("GUILD_ID")
 
 # Check for environment variables
-if not DISCORD_TOKEN or not GUILD_ID_STR:
-    print("Error: DISCORD_TOKEN or GUILD_ID environment variable is not set.")
-    exit(1)
-
-try:
-    GUILD_ID = int(GUILD_ID_STR)
-except ValueError:
-    print("Error: GUILD_ID environment variable is not a valid integer.")
+if not DISCORD_TOKEN:
+    print("Error: DISCORD_TOKEN environment variable is not set.")
     exit(1)
 
 # Define the intents for the bot
@@ -30,17 +23,16 @@ tree = discord.app_commands.CommandTree(bot)
 async def on_ready():
     """
     Event that runs when the bot is connected to Discord.
-    It synchronizes the command tree to the specified guild.
+    It synchronizes the command tree globally.
     """
     print(f'Logged in as {bot.user}')
-    # Sync the command tree to the specific guild
-    await tree.sync(guild=discord.Object(id=GUILD_ID))
-    print(f'Commands synced to guild: {GUILD_ID}')
+    # Sync the command tree globally. This can take up to an hour to appear.
+    await tree.sync()
+    print('Commands synced globally.')
 
 @tree.command(
     name="shutup",
-    description="Makes the bot mention the specified user 100 times.",
-    guild=discord.Object(id=GUILD_ID)
+    description="Makes the bot mention the specified user 100 times."
 )
 @discord.app_commands.checks.has_permissions(manage_messages=True)
 async def shutup(interaction: discord.Interaction, user: discord.Member):
