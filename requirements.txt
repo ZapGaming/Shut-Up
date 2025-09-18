@@ -1,4 +1,4 @@
 discord.py
 Flask
-gevent /* for V2 */
-gunicorn /* for V2 */
+gevent
+gunicorn
